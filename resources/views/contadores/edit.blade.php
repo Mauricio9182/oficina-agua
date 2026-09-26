@@ -7,6 +7,7 @@
 @stop
 
 @section('content')
+@include('partials.inactivity-modal')
 
     @if (session('error'))
         <div class="alert alert-danger">{{ session('error') }}</div>
