@@ -448,6 +448,14 @@
 
                     @enderror
 
+                    {{--  contador de caracteres (Mejora #6) --}}
+                    <small
+                        id="direccionServicioContador"
+                        class="form-text text-muted"
+                    >
+                        0/255 caracteres
+                    </small>
+
                 </div>
 
 
@@ -598,7 +606,7 @@
                            justify-content-between mt-4"
                 >
 
-                    <a
+                    
                         href="{{ route('contadores.index') }}"
                         class="btn btn-secondary"
                     >
@@ -633,6 +641,47 @@
 @section('js')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // 🆕 NUEVO: contador de caracteres (Mejora #6)
+            const inputDireccion =
+                document.getElementById('direccion_servicio');
+            const contadorDireccion =
+                document.getElementById('direccionServicioContador');
+            const DIRECCION_MAX = 255;
+            const DIRECCION_UMBRAL_ADVERTENCIA = 200;
+
+            if (inputDireccion && contadorDireccion) {
+                const actualizarContadorDireccion = function () {
+                    const longitud = inputDireccion.value.length;
+
+                    contadorDireccion.textContent =
+                        longitud + '/' + DIRECCION_MAX + ' caracteres';
+
+                    contadorDireccion.classList.remove(
+                        'text-muted',
+                        'text-warning',
+                        'text-danger'
+                    );
+
+                    if (longitud >= DIRECCION_MAX) {
+                        contadorDireccion.classList.add('text-danger');
+                    } else if (
+                        longitud >= DIRECCION_UMBRAL_ADVERTENCIA
+                    ) {
+                        contadorDireccion.classList.add('text-warning');
+                    } else {
+                        contadorDireccion.classList.add('text-muted');
+                    }
+                };
+
+                actualizarContadorDireccion();
+
+                inputDireccion.addEventListener(
+                    'input',
+                    actualizarContadorDireccion
+                );
+            }
+            
+
             const inputFoto = document.getElementById('foto');
             const vistaPrevia = document.getElementById('vistaPrevia');
             const contenedorVistaPrevia =
