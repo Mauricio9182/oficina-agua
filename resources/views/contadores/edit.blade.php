@@ -183,9 +183,21 @@
                         required
                     >
 
-                    @error('direccion_servicio')
-                        <span class="invalid-feedback">{{ $message }}</span>
+                      @error('direccion_servicio')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
                     @enderror
+
+                    {{--  NUEVO: contador de caracteres (Mejora #6) --}}
+                    <small
+                        id="direccionServicioContador"
+                        class="form-text text-muted"
+                    >
+                        0/255 caracteres
+                    </small>
+                    
+
                 </div>
 
                 <div class="form-group">
@@ -297,6 +309,7 @@
                     </button>
 
                     <a
+                                            
                         href="{{ route('contadores.index') }}"
                         class="btn btn-secondary"
                     >
@@ -308,4 +321,49 @@
         </div>
     </div>
 
+@stop
+
+@section('js')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const inputDireccion =
+                document.getElementById('direccion_servicio');
+            const contadorDireccion =
+                document.getElementById('direccionServicioContador');
+            const DIRECCION_MAX = 255;
+            const DIRECCION_UMBRAL_ADVERTENCIA = 200;
+
+            if (inputDireccion && contadorDireccion) {
+                const actualizarContadorDireccion = function () {
+                    const longitud = inputDireccion.value.length;
+
+                    contadorDireccion.textContent =
+                        longitud + '/' + DIRECCION_MAX + ' caracteres';
+
+                    contadorDireccion.classList.remove(
+                        'text-muted',
+                        'text-warning',
+                        'text-danger'
+                    );
+
+                    if (longitud >= DIRECCION_MAX) {
+                        contadorDireccion.classList.add('text-danger');
+                    } else if (
+                        longitud >= DIRECCION_UMBRAL_ADVERTENCIA
+                    ) {
+                        contadorDireccion.classList.add('text-warning');
+                    } else {
+                        contadorDireccion.classList.add('text-muted');
+                    }
+                };
+
+                actualizarContadorDireccion();
+
+                inputDireccion.addEventListener(
+                    'input',
+                    actualizarContadorDireccion
+                );
+            }
+        });
+    </script>
 @stop
